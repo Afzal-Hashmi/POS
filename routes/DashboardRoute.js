@@ -3,6 +3,7 @@ const checkCookie = require("../middlewares/checkCookie");
 const { hashPassword } = require("../middlewares/hashPassword");
 const XLSX = require("xlsx");
 const router = require("express").Router();
+const QRCode = require("qrcode");
 
 const Months = [
   "January",
@@ -350,13 +351,18 @@ router.post("/print", checkCookie("authToken"), async (req, res) => {
       message: "Please fill all the fields",
       user: req.user,
     });
+  const url =
+    "https://www.google.com/maps/place/HASHMI+GRAINS+%26+BAKERS/@31.3790284,74.1656002,17z/data=!3m1!4b1!4m6!3m5!1s0x3918ff265603de37:0x63461b48f70ea218!8m2!3d31.3790284!4d74.1681751!16s%2Fg%2F11vr8lj36z?entry=ttu";
+  const qrCodeImage = await QRCode.toDataURL(url);
   const orders = await client.query(
     `Select * from orderdetails where customerdetails = $1`,
     [customerdetails]
   );
-  return res
-    .status(200)
-    .render("print", { orders: orders.rows, user: req.user });
+  return res.status(200).render("print", {
+    orders: orders.rows,
+    user: req.user,
+    qrcode: qrCodeImage,
+  });
 });
 
 router.get("/exceldownload", async (req, res) => {

@@ -3,16 +3,27 @@
   <head>
     <title>Print</title>
  <%- include('./partials/header.ejs') %>
+ <style>
+  .center{
+    text-align: center;
+    width: 100dvw;
+  }
+  .wrapper{
+    border: 2px solid black;
+    height: max-content + 80dvh;
+  }
+ </style>
   </head>
-  <body class="bg-dark-subtle">
+  <body class="bg-dark-subtle ">
+    <div class="wrapper">
     <nav class="navbar bg-dark-subtle">
       
       <div class="container p-5 py-2">
-        <a class="navbar-brand" href="/dashboard">Hashmi Grain & Bakers</a>
+        <a class="navbar-brand center" href="/dashboard">Hashmi Grain & Bakers</a>
       </div>
     </nav>
-    <div class="container">
-      <h4>Shop# 9B CANAL HEIGHTS AA BLOCK SEC D BAHRIA TOWN LAHORE</h4>
+    <div class="container center">
+      <h5>Shop# 9B CANAL HEIGHTS AA BLOCK SEC D BAHRIA TOWN LAHORE</h5>
       <h5>PH# 03234645823</h5>
 <table class="table align-middle">
   <thead class="list-group mt-5 align-middle ">
@@ -31,19 +42,20 @@
       <tr class="list-group-item d-flex justify-content-around align-middle">
           <td><span><%= list.orderno %></span></td>
           <td><span><%= list.productname %></span></td>
-          <td><span><%= list.productquantity %> kg</span></td>
+          <td><span><%= list.productquantity %>kg</span></td>
           <td><span><%= list.totalprice %>rs</span></td>
         <% total_price+=list.totalprice %>
     </tr>
     <% }) %>
     </tbody>
     </table>
-    <div class="d-flex justify-content-around">
-      <span class="m-5">Total Price: <%= total_price %>rs</span>
-      <span class="m-5">Date: <%= date.toDateString() %></span>
+    <div class="d-flex flex-column">
+      <span class="m-2">Total Price: <%= total_price %>rs</span>
+      <span class="m-2">Date: <%= date.toDateString() %></span>
+      <span class="m-2"><img src="<%= qrcode %>" alt="" width="150px" height="150px">%></span>
       
     </div>
-    
+  </div>
     <%- include('./partials/footer.ejs') %>
   </body>
 </html>
