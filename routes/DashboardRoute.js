@@ -441,7 +441,12 @@ router.get("/deleteall", checkCookie("authToken"), async (req, res) => {
       message: "All orders deleted successfully",
       user: req.user,
     });
-  } catch (error) {}
+  } catch (error) {
+    return res.status(500).render("addnewuser", {
+      message: "Internal Server error",
+      user: req.user,
+    });
+  }
 });
 
 router.get("/deleteuser/:email", checkCookie("authToken"), async (req, res) => {
@@ -465,6 +470,11 @@ router.get("/deleteuser/:email", checkCookie("authToken"), async (req, res) => {
       user: req.user,
       users: allusers.rows,
     });
-  } catch (error) {}
+  } catch (error) {
+    return res.status(500).render("addnewuser", {
+      message: "Internal Server error",
+      user: req.user,
+    });
+  }
 });
 module.exports = router;
