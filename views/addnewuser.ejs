@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('./partials/header.ejs') %>
+    <title>Dashboard</title>
+  </head>
+  <body style="height: 100dvh">
+    <%-include('./partials/nav.ejs')%>
+    <div class="container mt-4">
+      <% if (locals.message) { %>
+      <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <%=message%>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="alert"
+          aria-label="Close"
+        ></button>
+      </div>
+      <% } %>
+
+      <div class="form mx-5 mt-5">
+        <div class="h1"><h1>Add New Employee:</h1></div>
+        <div class="data mx-5">
+          <form action="/dashboard/addnewuser" class="mt-5" method="post">
+            <div class="mb-3">
+              <label for="username" class="form-label">Username: </label>
+              <input
+                type="text"
+                class="form-control"
+                id="username"
+                name="username"
+                aria-describedby="username"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <label for="email" class="form-label">Email address</label>
+              <input
+                type="email"
+                class="form-control"
+                name="email"
+                id="email"
+                aria-describedby="email"
+                required
+              />
+              <div id="email" class="form-text">
+                We'll never share your email with anyone else.
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="password" class="form-label">Password</label>
+              <input
+                type="password"
+                name="password"
+                class="form-control"
+                id="password"
+                required
+              />
+            </div>
+            <div class="button d-flex justify-content-end">
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+          </form>
+        </div>
+      </div>
+      <% if (locals.users) { %>
+      <table class="table align-middle">
+        <thead class="list-group mt-5 align-middle">
+          <tr
+            class="list-group-item d-flex justify-content-around align-middle"
+          >
+            <th>Username</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody class="list-group mt-2 align-middle">
+          <% users.forEach(user => { %>
+          <tr
+            class="list-group-item d-flex justify-content-around align-middle"
+          >
+            <td><%= user.username %></td>
+            <td><%= user.email %></td>
+            <td><%= user.role%></td>
+            <td>
+              <a href="/dashboard/deleteuser/<%= user.email%>">Delete</a>
+            </td>
+          </tr>
+          <% }); %>
+        </tbody>
+      </table>
+      <% } %>
+    </div>
+    <%-include('./partials/footer.ejs')%>
+  </body>
+</html>

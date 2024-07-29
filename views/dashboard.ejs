@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('./partials/header.ejs') %>
+    <title>Dashboard</title>
+    <style>
+      @media (max-width: 575.98px) { .phoneform{display: flex;flex-direction: column;} .print{visibility: hidden;} table{ font-size:xx-small;} .field{width: 100%; }  .end-container{display: flex;flex-direction: column;} }
+    </style>
+  </head>
+  <body>
+    <%-include('./partials/nav.ejs')%>
+    <div class="container">
+      <form
+        action="/dashboard"
+        method="POST"
+        class="d-flex m-5 justify-content-between phoneform" ;
+      >
+   
+        <select name="productname" id="productname" required class="field mx-3 px-4" autofocus>
+          <option value="Expenses">Shop Expences</option>
+          <optgroup label="Cookies">
+          <option value="Oatmeal cookies">Oatmeal Cookies</option>
+          <option value="Coconut oatmeal cookies">Coconut Oatmeal Cookies</option>
+          <option value="Flex seed cookies">Flex Seed Cookies</option>
+          <option value="Channa khatai">Channa Khatai</option>
+          <option value="Naan khatai">Naan Khatai</option>
+          <option value="Zeera cookies">Zeera Cookies</option>
+        </optgroup>
+          <!-- ----------------------------------- -->
+          <optgroup label="Rice">
+          <option value="Super karnal new">Super Karnal New</option>
+          <option value="Super karnal old">Super Karnal Old</option>
+          <option value="Kainat steam">Kainat Steam</option>
+          <option value="Kainat seela">Kainat Seela</option>
+          <option value="Kainat short grain">Kainat Short Grain</option>
+          </optgroup>
+          <!-- ------------------------------------->
+          <optgroup label="Flour">
+          <option value="Whole wheat flour">Whole Wheat Flour</option>
+          <option value="Oat porridge">Oat Porridge</option>
+          <option value="Wheat porridge">Wheat Porridge</option>
+          <option value="Oat flour">Oat Flour</option>
+          <option value="Besan">Besan</option>
+          <option value="Meeda">Meeda</option>
+          <option value="Pink salt">Pink Salt</option>
+          </optgroup>
+          <!-- ------------------------------------->
+          <optgroup label="Spices">
+          <option value="Red chilli">Red Chilli</option>
+          <option value="Curshed red chilli">Crushed Red Chilli</option>
+          <option value="Tumeric">Turmeric</option>
+          <option value="Zeera">Zeera</option>
+          <option value="Garam masala powder">Garam Masala Powder</option>
+          <option value="Black pepper powder">Black Pepper Powder</option>
+          <option value="Sukha Dhania">Sukha Dhania</option>
+        </optgroup>
+        </select>
+   
+        <input
+          type="number"
+          name="productquantity"
+          placeholder="Quantity"
+          min="0" step="0.1"
+          class="form-control mx-3 mt-2"
+          required
+        />
+     
+        <input
+          type="text"
+          name="customerdetails"
+          placeholder="Phone Number"
+          
+          class="form-control mt-2 mx-3"
+        />
+    
+        <input type="submit" value="Add" class="btn btn-sm btn-success mt-2 mx-3" />
+      
+      
+      </form>
+<% if (locals.message) { %>
+  <div class="alert alert-warning alert-dismissible fade show" role="alert">
+    <strong>Holy guacamole!</strong> <%=message%>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+
+<% }if (locals.order == "" || !locals.order) { %>
+<h1 class="text-center">No Orders Yet</h1>
+<% } else { %>
+
+<table class="table table-striped align-middle">
+  <thead class="list-group mt-4 align-middle ">
+    <tr class="list-group-item d-flex justify-content-around align-middle">
+          <th> <span>order_num</span></th>
+          <th><span>Order Date</span></th>
+          <th><span>Product</span></th>
+          <th><span>Quantity</span></th>
+          <th><span>Price</span></th>
+          <th>Edit</th>
+          <th>Delete</th>
+        </li>
+    </tr>
+    </thead>
+    <tbody class="list-group mt-3 ">
+      <% let total_price = 0 %>
+      <% let date = new Date() %>
+      <% order.forEach(list=>{ %>
+      <tr class="list-group-item d-flex justify-content-around  ">
+          <td><span><%= list.orderno %></span></td>
+          <td><span><%= list.purchasedate.toDateString() %></span></td>
+          <td><span><%= list.productname %></span></td>
+          <td><span><%= list.productquantity%></span></td>
+          <td><span><%= list.totalprice %>rs</span></td>
+          <td>
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editorder<%= list.orderno %>">
+Edit
+</button>
+
+<!-- Modal -->
+<div class="modal fade " id="editorder<%= list.orderno %>" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">Edit:</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form
+        action="/dashboard/editorder"
+        method="post"
+        class="d-flex flex-column mx-4 my-3"
+      >
+      <div class="product mt-2">
+      <input type="hidden" name="ordernumber" value="<%= list.orderno %>">
+        <label for="productname">Product:</label>
+        <select name="productname" id="productname" required class="mx-3 " autofocus>
+          <option value="Expenses">Shop Expences</option>
+          <optgroup label="Cookies">
+          <option value="Oatmeal cookies">Oatmeal Cookies</option>
+          <option value="Coconut oatmeal cookies">Coconut Oatmeal Cookies</option>
+          <option value="Flex seed cookies">Flex Seed Cookies</option>
+          <option value="Channa khatai">Channa Khatai</option>
+          <option value="Naan khatai">Naan Khatai</option>
+          <option value="Zeera cookies">Zeera Cookies</option>
+        </optgroup>
+          <!-- ----------------------------------- -->
+          <optgroup label="Rice">
+          <option value="Super karnal new">Super Karnal New</option>
+          <option value="Super karnal old">Super Karnal Old</option>
+          <option value="Kainat steam">Kainat Steam</option>
+          <option value="Kainat seela">Kainat Seela</option>
+          <option value="Kainat short grain">Kainat Short Grain</option>
+          </optgroup>
+          <!-- ------------------------------------->
+          <optgroup label="Flour">
+          <option value="Whole wheat flour">Whole Wheat Flour</option>
+          <option value="Oat porridge">Oat Porridge</option>
+          <option value="Wheat porridge">Wheat Porridge</option>
+          <option value="Oat flour">Oat Flour</option>
+          <option value="Besan">Besan</option>
+          <option value="Meeda">Meeda</option>
+          <option value="Pink salt">Pink Salt</option>
+          </optgroup>
+          <!-- ------------------------------------->
+          <optgroup label="Spices">
+          <option value="Red chilli">Red Chilli</option>
+          <option value="Curshed red chilli">Crushed Red Chilli</option>
+          <option value="Tumeric">Turmeric</option>
+          <option value="Zeera">Zeera</option>
+          <option value="Garam masala powder">Garam Masala Powder</option>
+          <option value="Black pepper powder">Black Pepper Powder</option>
+          <option value="Sukha Dhania">Sukha Dhania</option>
+        </optgroup>
+        </select>
+      </div>
+      <div class="productquantity mt-2">
+        <label for="productquantity">Quantity:</label>
+        <input
+          type="number"
+          name="productquantity"
+          id="productquantity"
+          value="<%= list.productquantity %>"
+          min="0" step="0.1"
+          class="form-control mx-3"
+          required
+        />
+      </div>
+      <div class="customerdetails mt-2">
+        <label for="customerdetails">Customer Detail:</label>
+        <input
+          type="text"
+          id="customerdetails"
+          name="customerdetails"
+          value="<%= list.customerdetails %>"
+          
+          class="form-control mx-3"
+        />
+      </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        
+        <input type="submit" value="Edit" class="btn btn-sm btn-success mx-3 px-3 py-2" />
+      </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+         </td>
+          <td>
+          
+            <button
+            type="button"
+            class="btn btn-danger"
+            data-bs-toggle="modal"
+            data-bs-target="#DeleteModald<%= list.orderno %>"
+            >
+            <%= list.customerdetails %>
+          </button>
+        </td>
+
+            <div
+              class="modal fade"
+              id="DeleteModald<%= list.orderno %>"
+              tabindex="-1"
+              aria-labelledby="exampleModalLabel"
+              aria-hidden="true"
+            >
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content bg-secondary bg-gradient">
+                  <div class="modal-header">
+                    <h1
+                      class="modal-title fs-5"
+                      id="exampleModalLabel"
+                      style="color: rgb(199, 199, 199)"
+                    >
+                      Delete
+                    </h1>
+                    <button
+                      type="button"
+                      class="btn-close"
+                      data-bs-dismiss="modal"
+                      aria-label="Close"
+                    ></button>
+                  </div>
+                  <div class="modal-body" style="color: rgb(199, 199, 199)">
+                    Are you Sure You want to delete This Order ?
+                  </div>
+                  <div class="modal-footer">
+                    <a href="/dashboard" class="btn btn-success">Cancel</a>
+                    <a
+                    href="/dashboard/deleteorder/<%= list.orderno %>"
+                    class="btn btn-sm btn-danger"
+                      >Confirm</a
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+        <% total_price+=list.totalprice %>
+    </tr>
+    <% }) %>
+    </tbody>
+    </table>
+    <div class="end-container d-flex justify-content-between">
+    <div class="m-5">
+      <span class="m-3">Total Income: <%= total_price %>rs</span>
+      <div>
+      <span class="m-3 date">Date: <%= date.toDateString() %></span>       
+    </div>
+    </div>
+    <div class="print">
+      <form action="/dashboard/print" method="POST" class="m-5">
+      <input type="text" name="customerdetails" id="customerdetails" placeholder="Phone no" required class="form-control">
+      <input type="submit" value="Print" class="btn btn-sm btn-success mx-5 my-3 px-5">
+    </form>
+  </div>
+
+  <%}%>
+</div>
+    <%-include('./partials/footer.ejs')%>
+  </body>
+</html>

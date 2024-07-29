@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('./partials/header.ejs') %>
+    <title>Dashboard</title>
+    <style>
+        @media (max-width: 575.98px) {  table{ font-size:xx-small;} }
+      .left{float: right;margin: 3px;}
+      </style>
+  </head>
+  <body>
+    <%-include('./partials/nav.ejs')%>
+    
+    <div class="container mt-4">
+     
+<% if (locals.message) { %>
+  <div class="alert alert-warning alert-dismissible fade show" role="alert">
+    <strong>Holy guacamole!</strong> <%=message%>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+
+<% }if (locals.order == "" || !locals.order) { %>
+<h1 class="text-center">No Orders Yet</h1>
+<% } else { %>
+
+  <a href="/dashboard/exceldownload"><button class="btn btn-success left">Download Excel File</button></a>
+     
+  <button
+        type="button"
+        class="btn btn-danger left"
+        data-bs-toggle="modal"
+        data-bs-target="#DeleteModald"
+        >
+        !⚠!Permanantly Delete!⚠!
+      </button>
+
+  <div
+  class="modal fade"
+  id="DeleteModald"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1
+          class="modal-title fs-5"
+          id="exampleModalLabel"
+          style="color: rgb(146, 0, 0)"
+        >
+        !⚠!Permanantly Delete!⚠!
+        </h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body" style="color: rgb(0, 0, 0)">
+        Are you Sure You want to  !⚠!Permanantly Delete!⚠! all orders?
+      </div>
+      <div class="modal-footer">
+        <a href="/dashboard" class="btn btn-success">Cancel</a>
+        <a
+        href="/dashboard/deleteall"
+        class="btn btn-sm btn-danger"
+          >Confirm</a
+        >
+      </div>
+    </div>
+  </div>
+</div>
+
+<table class="table  align-middle">
+  <thead class="list-group mt-4 align-middle ">
+    <tr class="list-group-item d-flex justify-content-around align-middle">
+          <th> <span>order_num</span></th>
+          <th><span>Order Date</span></th>
+          <th><span>Product</span></th>
+          <th><span>Quantity</span></th>
+          <th><span>Price</span></th>
+          <th>Customer</th>
+        </li>
+    </tr>
+    </thead>
+    <tbody class="list-group mt-5 ">
+      <% let total_price = 0 %>
+      <% let date = new Date() %>
+      <% order.forEach(list=>{ %>
+      <tr class="list-group-item d-flex justify-content-around  ">
+          <td><span><%= list.orderno %></span></td>
+          <td><span><%= list.purchasedate.toDateString() %></span></td>
+          <td><span><%= list.productname %></span></td>
+          <td><span><%= list.productquantity%></span></td>
+          <td><span><%= list.totalprice %>rs</span></td>
+          <td><span><%= list.customerdetails%></span></td>
+          
+        
+
+
+        <% total_price+=list.totalprice %>
+    </tr>
+    <% }) %>
+    </tbody>
+    </table>
+    <div class="end-container d-flex justify-content-around">
+    <div class="m-5">
+      <span class="m-5">Total Income: <%= total_price %>rs</span>
+      <span class="m-5">Date: <%= date.toDateString() %></span>       
+    </div>
+  <%}%>
+ 
+    <%-include('./partials/footer.ejs')%>
+  </body>
+</html>
