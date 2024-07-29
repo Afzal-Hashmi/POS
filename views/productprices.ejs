@@ -40,12 +40,17 @@
  
       <input
         type="text"
-        name="productname"
+        name="product"
         value="<%= list.productname %>"
         class="form-control mx-3 mt-2"
-        required
         disabled
       />
+      <input
+      type="hidden"
+      name="productname"
+      value="<%= list.productname %>"
+      class="form-control mx-3 mt-2"
+    />
    
       <input
       type="text"
@@ -54,6 +59,14 @@
       class="form-control mx-3 mt-2"
       required
     />
+
+    <input
+    type="text"
+    name="pricedate"
+    value="<%= list.pricedate.getDate().toString() + ' ' + Months[list.pricedate.getMonth()] + ' ' + list.pricedate.getFullYear().toString()%>"
+    class="form-control mx-3 mt-2"
+    required
+  />
       <input type="submit" value="Edit " class="btn btn-sm btn-success mt-2 mx-3" />
     </div>
     

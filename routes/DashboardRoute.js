@@ -32,7 +32,6 @@ router.get("/", checkCookie("authToken"), async (req, res) => {
         .render("dashboard", { message: "No orders found", user: req.user });
     return res
       .status(200)
-
       .render("dashboard", { order: orders.rows, user: req.user });
   } catch (error) {
     return res.status(500).render("dashboard", {
@@ -65,14 +64,11 @@ router.post("/", checkCookie("authToken"), async (req, res) => {
     );
     const totalprice = productquantity * productprice.rows[0].productprice;
     if (!totalprice)
-      return res
-        .status(400)
-
-        .render("dashboard", {
-          message: " Product not found",
-          user: req.user,
-          order: orders.rows,
-        });
+      return res.status(400).render("dashboard", {
+        message: " Product not found",
+        user: req.user,
+        order: orders.rows,
+      });
 
     const orderdetails = await client.query(
       `insert into orderdetails (productname, productquantity, totalprice ,customerdetails) values ($1 , $2, $3, $4)`,
@@ -92,23 +88,17 @@ router.post("/", checkCookie("authToken"), async (req, res) => {
     const orders = await client.query(
       "select * from orderdetails where purchasedate = CURRENT_DATE"
     );
-    return res
-      .status(200)
-
-      .render("dashboard", {
-        message: "Order successful",
-        user: req.user,
-        order: orders.rows,
-      });
+    return res.status(200).render("dashboard", {
+      message: "Order successful",
+      user: req.user,
+      order: orders.rows,
+    });
   } catch (error) {
-    return res
-      .status(500)
-
-      .render("dashboard", {
-        message: "Internal Server error",
-        user: req.user,
-        order: orders.rows,
-      });
+    return res.status(500).render("dashboard", {
+      message: "Internal Server error",
+      user: req.user,
+      order: orders.rows,
+    });
   }
 });
 
@@ -124,45 +114,35 @@ router.get(
     if (!orders.rowcount == 0)
       return res
         .status(404)
-
         .render("dashboard", { message: "No orders found", user: req.user });
 
     const { ordernumber } = req.params;
     if (!ordernumber)
-      return res
-        .status(400)
-
-        .render("dashboard", {
-          message: "Please provide order number",
-          user: req.user,
-          order: orders.rows,
-        });
+      return res.status(400).render("dashboard", {
+        message: "Please provide order number",
+        user: req.user,
+        order: orders.rows,
+      });
     try {
       const orderdetails = await client.query(
         `delete from orderdetails where orderno = $1`,
         [ordernumber]
       );
       if (orderdetails.rowCount === 0)
-        return res
-          .status(400)
-
-          .render("dashboard", {
-            message: "Order not found ",
-            user: req.user,
-            order: orders.rows,
-          });
+        return res.status(400).render("dashboard", {
+          message: "Order not found ",
+          user: req.user,
+          order: orders.rows,
+        });
 
       const orders = await client.query(
         "select * from orderdetails where purchasedate = CURRENT_DATE"
       );
-      return res
-        .status(200)
-
-        .render("dashboard", {
-          message: "Order deleted successfully ",
-          user: req.user,
-          order: orders.rows,
-        });
+      return res.status(200).render("dashboard", {
+        message: "Order deleted successfully ",
+        user: req.user,
+        order: orders.rows,
+      });
     } catch (error) {
       return res.status(500).render("dashboard", {
         message: "Internal Server error",
@@ -235,30 +215,21 @@ router.get("/productprices", checkCookie("authToken"), async (req, res) => {
   try {
     const productprices = await client.query("SELECT * FROM productprices");
     if (productprices.rows.length === 0)
-      return (
-        res
-          .status(403)
-          // .json({ message: "There are no prices to show" });
-          .render("changeprices", {
-            user: req.user,
-            message: "There are no prices to show",
-          })
-      );
-    return (
-      res
-        .status(200)
-        // .json({ user: req.user, prices: productprices });
-        .render("productprices", {
-          user: req.user,
-          pricesno: productprices,
-        })
-    );
+      return res.status(403).render("changeprices", {
+        user: req.user,
+        message: "There are no prices to show",
+      });
+
+    return res.status(200).render("productprices", {
+      user: req.user,
+      pricesno: productprices,
+      Months: Months,
+    });
   } catch (error) {
     return res.status(500).render("productprices", {
       message: "Internal Server error",
       user: req.user,
     });
-    // .json({ message: "Internal Server error" });
   }
 });
 
@@ -268,14 +239,13 @@ router.post("/productprices", checkCookie("authToken"), async (req, res) => {
     return res.status(403).redirect("/dashboard");
   try {
     const { productname, productprice } = req.body;
-    console.log(productname, productprice);
     if (!productname || !productprice)
       return res.status(400).render("productprices", {
         user: req.user,
         message: "Please fill all the fields",
       });
     const updateproductprices = await client.query(
-      `UPDATE productprices SET productprice = $1 WHERE productname = $2`,
+      `UPDATE productprices SET productprice = $1, pricedate = CURRENT_DATE WHERE productname = $2`,
       [productprice, productname]
     );
     if (updateproductprices.rowCount === 0)
@@ -290,11 +260,11 @@ router.post("/productprices", checkCookie("authToken"), async (req, res) => {
         user: req.user,
         message: "There are no prices to show",
       });
-
     return res.status(200).render("productprices", {
       user: req.user,
       message: "Product updated successfully",
       pricesno: productprices,
+      Months: Months,
     });
   } catch (error) {
     return res.status(500).render("productprices", {
@@ -423,6 +393,7 @@ router.get("/exceldownload", async (req, res) => {
       "Content-Type",
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     );
+
     const buffer = XLSX.write(workbook, { type: "buffer" });
     res.send(buffer);
     return res.redirect("/dashboard/allorders");
